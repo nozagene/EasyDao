@@ -9,8 +9,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import org.apache.commons.dbutils.DbUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
 /**
  *
  * @author nozaki
@@ -26,7 +25,7 @@ public class ConnectionManager {
     /** DB パスワード*/
     private static String dbPassword;
 
-    private static final Log logger__ = LogFactory.getLog(ConnectionManager.class);
+    private static final Logger logger__ = Logger.getLogger(ConnectionManager.class);
 
     /**
      * @return the dbDriver

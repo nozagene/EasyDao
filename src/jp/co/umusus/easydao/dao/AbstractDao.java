@@ -19,12 +19,12 @@ import org.apache.commons.dbutils.BasicRowProcessor;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.ResultSetHandler;
 import org.apache.commons.dbutils.RowProcessor;
+import org.apache.commons.dbutils.handlers.ArrayListHandler;
 import org.apache.commons.dbutils.handlers.BeanHandler;
 import org.apache.commons.dbutils.handlers.BeanListHandler;
 import org.apache.commons.dbutils.handlers.MapHandler;
 import org.apache.commons.dbutils.handlers.MapListHandler;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
 /**
  *
  * @author nozaki
@@ -33,7 +33,7 @@ public abstract class AbstractDao<T> {
 
     private Connection connection = null;
 
-    private static final Log logger__ = LogFactory.getLog(AbstractDao.class);
+    private static final Logger logger__ = Logger.getLogger(AbstractDao.class);
 
     /**
      * エンティティのクラスです。
@@ -124,6 +124,19 @@ public abstract class AbstractDao<T> {
         /* 結果をリストにして返す */
         return    getList(sql, param, runner, handler);
 	}
+    /**
+	 * List(配列)で結果を取得する。
+	 * @param sql
+	 * @param param
+	 * @return
+	 */
+	public List selectMapArrayList( String sql, Object[] param) throws Exception{
+        RowProcessor rp = new BasicRowProcessor(new AdjustBeanProcessor());
+        QueryRunner runner = new QueryRunner();
+        ResultSetHandler handler = new ArrayListHandler(rp);
+        /* 結果をリストにして返す */
+        return    getList(sql, param, runner, handler);
+	}
 
     /**
      * 結果をリストにして返す
@@ -140,6 +153,12 @@ public abstract class AbstractDao<T> {
              resultList = (List) runner.query( this.getConnection(), sql, handler );
             } else {
                 resultList = ( List ) runner.query( this.getConnection(), sql, param, handler );
+            }
+            logger__.debug("実行SQL::" + sql);
+            if(param != null){
+                for (Object object : param) {
+                    logger__.debug("パラメータ::" + object);
+                }
             }
         } catch (SQLException ex) {
             logger__.error("SQLException", ex);
